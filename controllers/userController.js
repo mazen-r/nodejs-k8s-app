@@ -81,4 +81,14 @@ const loginUser = async (req, res, next) => {
         }
 }
 
-module.exports = { getUsers, getUser, createUser, loginUser};
+const deleteUser = async (req, res, next) => {
+    const email = req.user
+    try {
+        await User.destroy({ where: { email: email}})
+        return res.status(200).json({message: "Deleted user successfully"});
+    } catch(err) {
+        next(err)
+    }
+}
+
+module.exports = { getUsers, getUser, createUser, loginUser, deleteUser };

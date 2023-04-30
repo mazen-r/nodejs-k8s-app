@@ -21,10 +21,9 @@ const GenerateSignature = async (payload) => {
 
 const ValidateSignature = async (req) => {
     const signature = req.get('Authorization')
-    console.log(signature)
     if (signature) {
         const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET)
-        req.user = payload
+        req.user = payload.email
         return true        
     } else {
         return false
