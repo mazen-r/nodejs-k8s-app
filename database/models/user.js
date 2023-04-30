@@ -23,6 +23,10 @@ const User = db.define('User', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    salt: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

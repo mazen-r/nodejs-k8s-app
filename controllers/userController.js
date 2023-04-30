@@ -1,5 +1,5 @@
 const User = require("../database/models/user");
-const { GenerateSalt, GeneratePassword } = require('../utils/tokens')
+const { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature } = require('../utils/tokens')
 
 const getUsers = async (req, res, next) => {
     const id = req.params.id || 1
@@ -45,13 +45,12 @@ const createUser = async (req, res, next) => {
     }
     const user = await User.findOne({ where: {email: email}})
     if (user) {
-        console.log(user)
         return res.status(400).json({message: "This email has been registered"});
     }
     try {
-        let salt = await GenerateSalt()
-        let password = await GeneratePassword(uhashedPassword, salt)
-        const userData = await User.create({ userName, email, password });
+        const salt = await GenerateSalt()
+        const password = await GeneratePassword(uhashedPassword, salt)
+        const userData = await User.create({ userName, email, password, salt });
         const { verified, userId } = userData;
         res.status(200).json({
             message: "Created user successfully",
@@ -62,4 +61,24 @@ const createUser = async (req, res, next) => {
     };
 };
 
-module.exports = { getUsers, getUser, createUser};
+const loginUser = async (req, res, next) => {
+    const { email, password } = req.body
+    if (!email | !password) {
+        return res.status(400).json({message: "You must include all fields"});
+    }
+        const user = await User.findOne({ where: { email: email }});
+        try {
+            if (user) {
+                const validPassword = await ValidatePassword(password, user.password, user.salt)
+                if (validPassword) {
+                    const token = await GenerateSignature({ email: user.email, id: user.id})
+                    return res.status(200).json({token})
+                }
+            }
+            return res.status(400).json({message: "Invalid data!"});
+        } catch (err) {
+            next(err)
+        }
+}
+
+module.exports = { getUsers, getUser, createUser, loginUser};
