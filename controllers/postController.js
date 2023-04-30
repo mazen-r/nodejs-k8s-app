@@ -23,19 +23,18 @@ const createPost = async (req, res, next) => {
 const getPosts = async (req, res, next) => {
     const page = req.params.page || 1
     const offset = (page - 1) * 10;
-    // try {
+    try {
         const postsData = await Post.findAll({offset, limit:10});
         console.log(postsData)
         if (postsData.length > 0) {
             const filteredPosts = postsData.map(({ postId, title, description, authorId, author }) => ({
                 postId, title, description, authorId, author}));
-            // console.log(author)
             return res.status(200).json({ data: filteredPosts });
         };
         return res.status(404).json({ message: "No data avaiable" });
-    // } catch (err) {
-    //     next(err);
-    // }
+    } catch (err) {
+        next(err);
+    }
 };
 
 module.exports = { createPost, getPosts }
