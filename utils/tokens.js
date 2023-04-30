@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const { APP_SECRET } = require('../config')
+const { APP_SECRET } = require('../config');
 
 const GenerateSalt = async () => {
     return await bcrypt.genSalt()
@@ -19,4 +19,16 @@ const GenerateSignature = async (payload) => {
     return await jwt.sign(payload, APP_SECRET, {expiresIn: '1d'})
 }
 
-module.exports = { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature }
+const ValidateSignature = async (req) => {
+    const signature = req.get('Authorization')
+    console.log(signature)
+    if (signature) {
+        const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET)
+        req.user = payload
+        return true        
+    } else {
+        return false
+    };
+};
+
+module.exports = { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature, ValidateSignature }
