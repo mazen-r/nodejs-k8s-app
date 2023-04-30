@@ -35,10 +35,7 @@ const Post = db.define('Post', {
     author: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: false,
-        get() {
-            return User.findByPk(this.authorId).then(user => user.userName);
-        },        
+        unique: false,   
     },
 });
 
