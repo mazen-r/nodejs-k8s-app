@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 
 const User = require('./user')
 const db = require('../connection');
@@ -28,16 +28,17 @@ const Post = db.define('Post', {
         references: {
           model: User,
           key: 'userId',
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
         },
       },
     author: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,
-        references: {
-            model: User,
-            key: 'userName'
-        },
+        get() {
+            return User.findByPk(this.authorId).then(user => user.userName);
+        },        
     },
 });
 
