@@ -5,9 +5,9 @@ const userAuth = require('../middleware/auth')
 
 const router = express.Router();
 
-router.get("/user/:id?", controller.getUser);
-router.post("/create", controller.createUser);
+router.post("/register", controller.registerUser);
 router.post("/login", controller.loginUser);
+router.get("/profile", userAuth, controller.profile);
 router.delete("/delete", userAuth, controller.deleteUser);
 router.get("/:id?", controller.getUsers);
 
