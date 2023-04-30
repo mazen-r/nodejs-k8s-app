@@ -1,4 +1,5 @@
 const User = require("../database/models/user");
+const { GenerateSalt, GeneratePassword } = require('../utils/tokens')
 
 const getUsers = async (req, res, next) => {
     const id = req.params.id || 1
@@ -38,15 +39,18 @@ const getUser = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-    const { userName, email, password } = req.body;
-    if (!userName | !email | !password) {
+    const { userName, email, password: uhashedPassword } = req.body;
+    if (!userName | !email | !uhashedPassword) {
         return res.status(400).json({message: "You must include all fields"});
     }
-    const user = User.findOne({ where: {email: email}})
+    const user = await User.findOne({ where: {email: email}})
     if (user) {
+        console.log(user)
         return res.status(400).json({message: "This email has been registered"});
     }
-    try {   
+    try {
+        let salt = await GenerateSalt()
+        let password = await GeneratePassword(uhashedPassword, salt)
         const userData = await User.create({ userName, email, password });
         const { verified, userId } = userData;
         res.status(200).json({
