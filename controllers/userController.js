@@ -34,7 +34,7 @@ const loginUser = async (req, res, next) => {
             if (user) {
                 const validPassword = await ValidatePassword(password, user.password, user.salt)
                 if (validPassword) {
-                    const token = await GenerateSignature({ email: user.email, id: user.id})
+                    const token = await GenerateSignature({ email: user.email, userId: user.userId, userName: user.userName})
                     return res.status(200).json({token})
                 }
             }
@@ -45,7 +45,7 @@ const loginUser = async (req, res, next) => {
 }
 
 const profile = async (req, res, next) => {
-    const email = req.user
+    const { email } = req.user
     try {
         const user = await User.findOne({ where: { email: email }});
         const { userId, userName, verified } = user
