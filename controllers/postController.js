@@ -73,4 +73,25 @@ const updatePost = async (req, res, next) => {
     };
 };
 
-module.exports = { createPost, getPosts, getPost, updatePost }
+const deletePost = async (req, res, next) => {
+    const postId = parseInt(req.params.postId);
+    const { userId } = req.user
+    if (isNaN(postId)) {
+        return res.status(400).json({message: "You must provide the post ID"});
+    };
+    try {
+        const postData = await Post.findByPk(postId);
+        if (postData) {
+            if (postData.authorId === userId) {
+                await Post.destroy({ where: { postId: postId}})
+                return res.status(200).json({message: "Deleted post successfully"});
+            }
+            return res.status(403).json({message: "You are not authorized"})
+        }
+        return res.status(404).json({ message: "No posts avaiable" });
+    } catch (err) {
+        next(err);
+    };
+};
+
+module.exports = { createPost, getPosts, getPost, updatePost, deletePost }
