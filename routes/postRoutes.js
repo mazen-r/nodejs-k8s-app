@@ -6,6 +6,8 @@ const userAuth = require('../middleware/auth')
 const router = express.Router();
 
 router.post("/create", userAuth, controller.createPost);
-router.get("/:page?", controller.getPosts);
+router.post("/update/:postId?", userAuth, controller.updatePost);
+router.get("/page/:page?", controller.getPosts);
+router.get("/:postId?", controller.getPost);
 
 module.exports = router;
