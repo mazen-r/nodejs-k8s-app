@@ -1,4 +1,5 @@
-const User = require("../database/models/user");
+const  { User, Post } = require("../database/models/relations");
+
 const { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature } = require('../utils/tokens')
 
 const registerUser = async (req, res, next) => {
@@ -45,23 +46,30 @@ const loginUser = async (req, res, next) => {
 }
 
 const profile = async (req, res, next) => {
-    const { email } = req.user
+    const { userId } = req.user
     try {
-        const user = await User.findOne({ where: { email: email }});
-        const { userId, userName, verified } = user
-        res.status(200).json({
-            data: { userId, userName, email, verified }
-        });
+        const user = await User.findByPk(userId);
+        if (user) {
+            const { userName, verified, email } = user
+            res.status(200).json({
+                data: { userId, userName, email, verified }
+            });
+        }
+        return res.status(404).json({message: "There is no such user"});
     } catch (err) {
         next(err)
     };
 };
 
 const deleteUser = async (req, res, next) => {
-    const email = req.user
+    const { userId } = req.user
     try {
-        await User.destroy({ where: { email: email}})
-        return res.status(200).json({message: "Deleted user successfully"});
+        const user = await User.findByPk(userId, { include: [Post]})
+        if (user) {
+            await user.destroy()
+            return res.status(200).json({message: "Deleted user successfully"});
+        }
+        return res.status(404).json({message: "There is no such user"});
     } catch(err) {
         next(err)
     }
