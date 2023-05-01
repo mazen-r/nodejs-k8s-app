@@ -1,4 +1,4 @@
-const Post = require('../database/models/post');
+const  { User, Post } = require("../database/models/relations");
 
 const createPost = async (req, res, next) => {
     const { userId: authorId, userName: author } = req.user

@@ -1,6 +1,5 @@
-const { DataTypes, Sequelize } = require('sequelize');
+const { DataTypes } = require('sequelize');
 
-const User = require('./user')
 const db = require('../connection');
 
 const Post = db.define('Post', {
@@ -21,25 +20,13 @@ const Post = db.define('Post', {
         allowNull: false,
         unique: false
     },
-    authorId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        unique: false,
-        references: {
-          model: User,
-          key: 'userId',
-          onUpdate: 'CASCADE',
-          onDelete: 'CASCADE',
-        },
-      },
     author: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: false,   
-    },
+    }
+}, { 
+    timestamps: false
 });
-
-User.hasMany(Post);
-Post.belongsTo(User, { foreignKey: 'authorId' });
 
 module.exports = Post;

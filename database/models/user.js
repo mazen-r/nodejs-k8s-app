@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+
 const db = require('../connection');
 
 const User = db.define('User', {
@@ -31,6 +32,8 @@ const User = db.define('User', {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     }
+}, { 
+    timestamps: false
 });
 
 module.exports = User;
