@@ -1,6 +1,6 @@
 const  { User, Post } = require("../database/models/relations");
 const { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature } = require('../utils/tokens');
-const { sendOTP } = require('../utils/twilio');
+const { sendOTP, verifyCode } = require('../utils/twilio');
 
 const registerUser = async (req, res, next) => {
     const { userName, email, password: uhashedPassword } = req.body;
@@ -51,9 +51,7 @@ const profile = async (req, res, next) => {
         const user = await User.findByPk(userId);
         if (user) {
             const { userName, verified, email } = user
-            res.status(200).json({
-                data: { userId, userName, email, verified }
-            });
+            return res.status(200).json({ data: { userId, userName, email, verified }});
         }
         return res.status(404).json({message: "There is no such user"});
     } catch (err) {
@@ -75,13 +73,34 @@ const deleteUser = async (req, res, next) => {
     }
 }
 
-const userOTP = async (req, res, next) => {
+const userOTP = async (req, res) => {
     const { phoneNumber } = req.body;
     if (!phoneNumber) {
         return res.status(400).json({message: "You must provide your phone number!"});
-    }
-    await sendOTP(phoneNumber);
-    return res.status(200).json({message: "Verification code sent!"});
+    };
+    try {
+        await sendOTP(phoneNumber);
+        return res.status(200).json({message: "Verification code sent!"});
+    } catch(err) {
+        return res.status(400).json({message: "Phone number isn't correct!"});
+    };
 };
 
-module.exports = { profile, registerUser, loginUser, deleteUser, userOTP };
+const verifyOTP = async (req, res) => {
+    const { userId } = req.user;
+    const { phoneNumber, verificationCode } = req.body;
+    if (!phoneNumber | !verificationCode) {
+        return res.status(400).json({message: "You must provide your phone number and verification code!"});
+    }
+    try {
+        const verificationStatus = await verifyCode(phoneNumber, verificationCode);
+        if (verificationStatus === 'approved') {
+            await User.update({ verified: true }, { where: {userId: userId}});
+            return res.status(200).json({message: "Account verified successfully!"});
+        };
+    } catch(err) {
+        return res.status(400).json({message: "Verification code isn't correct!"});
+    };
+};
+
+module.exports = { profile, registerUser, loginUser, deleteUser, userOTP, verifyOTP };

@@ -10,5 +10,6 @@ router.post("/login", controller.loginUser);
 router.get("/profile", userAuth, controller.profile);
 router.delete("/delete", userAuth, controller.deleteUser);
 router.get("/otp", userAuth, controller.userOTP);
+router.post("/verify", userAuth, controller.verifyOTP);
 
 module.exports = router;
