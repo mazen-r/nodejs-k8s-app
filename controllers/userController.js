@@ -1,6 +1,6 @@
 const  { User, Post } = require("../database/models/relations");
-
-const { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature } = require('../utils/tokens')
+const { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature } = require('../utils/tokens');
+const { sendOTP } = require('../utils/twilio');
 
 const registerUser = async (req, res, next) => {
     const { userName, email, password: uhashedPassword } = req.body;
@@ -75,4 +75,13 @@ const deleteUser = async (req, res, next) => {
     }
 }
 
-module.exports = { profile, registerUser, loginUser, deleteUser };
+const userOTP = async (req, res, next) => {
+    const { phoneNumber } = req.body;
+    if (!phoneNumber) {
+        return res.status(400).json({message: "You must provide your phone number!"});
+    }
+    await sendOTP(phoneNumber);
+    return res.status(200).json({message: "Verification code sent!"});
+};
+
+module.exports = { profile, registerUser, loginUser, deleteUser, userOTP };
