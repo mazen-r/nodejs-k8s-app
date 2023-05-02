@@ -1,4 +1,4 @@
-const { TWILIO_SID, TWILIO_AUTH, TWILIO_NUMBER, TWILIO_SERVICE_SID } = require('../config');
+const { TWILIO_SID, TWILIO_AUTH, TWILIO_SERVICE_SID } = require('../config');
 
 const twilio = require('twilio');
 
@@ -14,8 +14,7 @@ const verifyCode = async (phoneNumber, verificationCode) => {
     const verificationStatus = await client.verify.v2.services(TWILIO_SERVICE_SID)
           .verificationChecks
           .create({to: phoneNumber, code: verificationCode});
-    return verificationStatus.status
-
-}
+    return verificationStatus.status;
+};
 
 module.exports = { sendOTP, verifyCode }
