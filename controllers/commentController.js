@@ -59,4 +59,25 @@ const updateComment = async (req, res, next) => {
     };
 };
 
-module.exports = { createComment, getComments, updateComment }
+const deleteComment = async (req, res, next) => {
+    const commentId = req.params.commentId;
+    const { userId } = req.user;
+    if (!commentId) {
+        return res.status(400).json({message: "Please provide the comment Id"});        
+    };
+    try {
+        const commentData = await Comment.findByPk(commentId);
+        if (commentData) {
+            if (commentData.authorId === userId) {
+                await Comment.destroy({where: {CommentId: commentId}});
+                return res.status(200).json({message: "Deleted post successfully"});
+            };
+            return res.status(403).json({message: "You are not authorized"});
+        };
+        return res.status(404).json({message: "No comment found with this Id"});
+    } catch (err) {
+        next(err);
+    };
+};
+
+module.exports = { createComment, getComments, updateComment, deleteComment }
