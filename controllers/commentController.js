@@ -25,15 +25,38 @@ const getComments = async (req, res, next) => {
         if (postId) {
             const commentsData = await Comment.findAll({where: { postId: postId}});
             if (commentsData.length > 0) {
-                const comments = commentsData.map(({ authorId, postId, commentId, description }) => ({
-                    authorId, postId, commentId, description }));
+                const comments = commentsData.map(({ authorId, postId, CommentId, description }) => ({
+                    authorId, postId, CommentId, description }));
                 return res.status(200).json({ postId, comments });
             };
         };
-        return res.status(400).json({message: "No comments found to this post"});
+        return res.status(404).json({message: "No comments found to this post"});
     } catch (err) {
         next(err);
     };
 };
 
-module.exports = { createComment, getComments }
+const updateComment = async (req, res, next) => {
+    const commentId = req.params.commentId;
+    const { userId } = req.user;
+    const { description } = req.body;
+    if (!commentId) {
+        return res.status(400).json({message: "Please provide the comment Id"});
+    }
+    try {
+        const commentData = await Comment.findByPk(commentId);
+        if (commentData) {
+            if (commentData.authorId === userId) {
+                const updatedComment = (await Comment.update({ description: description}, { where: {CommentId: commentId}, returning: true}))[1][0];
+                const { description: updatedDescription } = updatedComment;
+                return res.status(200).json({ data: { authorId: userId, commentId, description: updatedDescription }});
+            }
+            return res.status(403).json({message: "You are not authorized"});
+        };
+        return res.status(400).json({message: "Please provide the comment Id"});
+    } catch (err) {
+        next(err);
+    };
+}
+
+module.exports = { createComment, getComments, updateComment }
