@@ -7,6 +7,6 @@ const userVerify = require('../middleware/verification')
 const router = express.Router();
 
 router.post("/create", userAuth, userVerify, controller.createComment);
-router.get("/post/:postId?", userAuth, userVerify, controller.getComments);
+router.get("/post/:postId?", controller.getComments);
 
 module.exports = router;
