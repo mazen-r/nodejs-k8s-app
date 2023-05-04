@@ -1,14 +1,14 @@
-const  { User, Post } = require("../database/models/relations");
+const  { Post } = require("../database/models/relations");
 
 const createPost = async (req, res, next) => {
-    const { userId: authorId, userName: author } = req.user
+    const { userId: authorId, userName: author } = req.user;
     const { title, description } = req.body;
     if (!title | !description) {
         return res.status(400).json({message: "You must add title and description"});
     };
     try {
         const postsData = await Post.create({ title, description, authorId, author });
-        const { postId } = postsData
+        const { postId } = postsData;
         return res.status(200).json({ message: "Created post successfully",
             data: { postId, title, description, author, authorId }
         });
@@ -18,7 +18,7 @@ const createPost = async (req, res, next) => {
 };
 
 const getPosts = async (req, res, next) => {
-    const page = req.params.page || 1
+    const page = req.params.page || 1;
     const offset = (page - 1) * 10;
     try {
         const postsData = await Post.findAll({offset, limit:10});
@@ -53,7 +53,7 @@ const getPost = async (req, res, next) => {
 const updatePost = async (req, res, next) => {
     const postId = parseInt(req.params.postId);
     const { title, description } = req.body;
-    const { userId } = req.user
+    const { userId } = req.user;
     if (isNaN(postId)) {
         return res.status(400).json({message: "You must provide the post ID"});
     };
@@ -64,8 +64,8 @@ const updatePost = async (req, res, next) => {
                 const updatedPost = (await Post.update({ title: title, description: description}, { where: {postId: postId}, returning: true}))[1][0];
                 const { title: updatedTitle, description: updatedDescription, authorId, author } = updatedPost;
                 return res.status(200).json({ data: { postId, title: updatedTitle, description: updatedDescription, authorId, author }});
-            }
-            return res.status(403).json({message: "You are not authorized"})
+            };
+            return res.status(403).json({message: "You are not authorized"});
         };
         return res.status(404).json({ message: "No posts avaiable" });
     } catch(err) {
@@ -83,7 +83,7 @@ const deletePost = async (req, res, next) => {
         const postData = await Post.findByPk(postId);
         if (postData) {
             if (postData.authorId === userId) {
-                await Post.destroy({ where: { postId: postId}})
+                await Post.destroy({ where: { postId: postId}});
                 return res.status(200).json({message: "Deleted post successfully"});
             }
             return res.status(403).json({message: "You are not authorized"})
@@ -94,4 +94,4 @@ const deletePost = async (req, res, next) => {
     };
 };
 
-module.exports = { createPost, getPosts, getPost, updatePost, deletePost }
+module.exports = { createPost, getPosts, getPost, updatePost, deletePost };
