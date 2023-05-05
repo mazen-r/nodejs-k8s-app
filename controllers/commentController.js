@@ -1,4 +1,5 @@
 const { Comment, Post } = require('../database/models/relations');
+const redisClient = require('../utils/redis');
 
 const createComment = async (req, res, next) => {
     const { userId: authorId, userName } = req.user;
@@ -19,8 +20,9 @@ const createComment = async (req, res, next) => {
     };
 };
 
-const getComments = async (req, res, next) => {
+const getComments = async ( req, res, next) => {
     const postId = parseInt(req.params.postId);
+    const cachekey = req.cacheKey;
     if (isNaN(postId)) {
         return res.status(400).json({message: "You must provide description and post Id"});
     };
@@ -29,7 +31,9 @@ const getComments = async (req, res, next) => {
         if (comments.length > 0) {
             const commentsData = comments.map(({ authorId, postId, CommentId, description }) => ({
                 authorId, postId, CommentId, description }));
-            return res.status(200).json({ postId, commentsData });
+            const data = { postId, commentsData }
+            await redisClient.set(cachekey, JSON.stringify(data), {EX: 100});
+            return res.status(200).json( data );
         };
         return res.status(404).json({message: "No comments found to this post"});
     } catch (err) {
