@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post("/create", userAuth, userVerify, controller.createComment);
 router.get("/post/:postId?", cache, controller.getComments);
-router.post("/update/:commentId?", userAuth, controller.updateComment);
+router.put("/update/:commentId?", userAuth, controller.updateComment);
 router.delete("/delete/:commentId?", userAuth, controller.deleteComment);
 
 module.exports = router;

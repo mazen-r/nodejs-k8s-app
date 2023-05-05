@@ -7,7 +7,7 @@ const cache = require('../middleware/cache')
 const router = express.Router();
 
 router.post("/create", userAuth, controller.createPost);
-router.post("/update/:postId?", userAuth, controller.updatePost);
+router.put("/update/:postId?", userAuth, controller.updatePost);
 router.get("/page/:page", cache, controller.getPosts);
 router.get("/:postId?", controller.getPost);
 router.delete("/delete/:postId?", userAuth, controller.deletePost);
