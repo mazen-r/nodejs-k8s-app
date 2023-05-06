@@ -1,0 +1,499 @@
+swagger: "2.0"
+info:
+  description: "API documentation for the blog app"
+  version: "1.0.0"
+  title: "Blog API"
+  contact:
+    name: "Mazen Ramadan"
+    url: "https://github.com/mazen-r"
+tags:
+  - name: "user"
+    description: "Users Operations"
+  - name: "post"
+    description: "Posts operations"
+  - name: "comment"
+    description: "Comments operations"    
+schemes:
+  - "http"
+  - "https"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+paths:
+  /users/register:
+    post:
+      tags:
+        - "user"
+      summary: "Register a new user"
+      description: "This endpoint allows users to register a new account."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "user"
+          description: "User object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              userName:
+                type: "string"
+                description: "The user's name"
+              email:
+                type: "string"
+                description: "The user's email address"
+              password:
+                type: "string"
+                description: "The user's password"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        500:
+          description: "Internal server error"
+  /users/login:
+    post:
+      tags:
+        - "user"
+      summary: "Authenticate an existing user"
+      description: "This endpoint allows users to authenticate their credentials."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "user"
+          description: "User object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              email:
+                type: "string"
+                description: "The user's email address"
+              password:
+                type: "string"
+                description: "The user's password"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        500:
+          description: "Internal server error"
+  /users/profile:
+    get:
+      tags:
+        - "user"
+      summary: "Get user profile"
+      description: "This endpoint allows users to get their profile information."
+      produces:
+        - "application/json"
+      security:
+        - Bearer: []      
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        500:
+          description: "Internal server error"
+  /users/delete:
+    delete:
+      tags:
+        - "user"
+      summary: "Delete user"
+      description: "This endpoint allows users to delete their account."
+      produces:
+        - "application/json"
+      security:
+        - Bearer: []        
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not found"          
+        500:
+          description: "Internal server error"
+  /users/otp:
+    get:
+      tags:
+        - "user"
+      summary: "Get user OTP"
+      description: "This endpoint allows users to get their OTP for verification."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "user"
+          description: "User object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              phoneNumber:
+                type: "integer"
+                description: "The user's phone number"
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        500:
+          description: "Internal server error"
+      security:
+        - Bearer: []
+  /users/verify:
+    post:
+      tags:
+        - "user"
+      summary: "Verify user OTP"
+      description: "This endpoint allows users to verify their OTP."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "user"
+          description: "User object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              phoneNumber:
+                type: "integer"
+                description: "The user's phone number"
+              verificationCode:
+                type: "integer"
+                description: "The user's verification code"                
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        500:
+          description: "Internal server error"
+      security:
+        - Bearer: []
+  /posts/create:
+    post:
+      tags:
+        - "post"
+      summary: "Create a new user"
+      description: "This endpoint allows users to create posts."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "post"
+          description: "Post object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The post's title"
+              description:
+                type: "string"
+                description: "The post's description"
+      security:
+        - Bearer: []                
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        500:
+          description: "Internal server error"
+  /posts/page/{page}:
+    get:
+      tags:
+        - "post"
+      summary: "Get posts"
+      description: "This endpoint allows users to get posts."
+      produces:
+        - "application/json"
+      parameters:
+        - name: "page"
+          in: "path"
+          description: "The page number"
+          required: true
+          type: "integer"
+        - name: "userId"
+          in: "query"
+          description: "The ID of the posts author"
+          required: false
+          type: "integer"        
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not found"
+        500:
+          description: "Internal server error"
+  /posts/{postId}:
+    get:
+      tags:
+        - "post"
+      summary: "Get one post"
+      description: "This endpoint allows users to get posts."
+      produces:
+        - "application/json"
+      parameters:
+        - name: "postId"
+          in: "path"
+          description: "The post ID"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not found"
+        500:
+          description: "Internal server error"          
+  /posts/update/{postId}:
+    put:
+      tags:
+        - "post"
+      summary: "Update post"
+      description: "This endpoint allows users to update posts."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "postId"
+          in: "path"
+          description: "The post ID"
+          required: true
+          type: "integer"      
+        - in: "body"
+          name: "post"
+          description: "Post object"
+          required: false
+          schema:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                description: "The post's title"
+              description:
+                type: "string"
+                description: "The post's description"
+      security:
+        - Bearer: []                
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        404:
+          description: "Not found"          
+        500:
+          description: "Internal server error"          
+  /posts/delete/{postId}:
+    delete:
+      tags:
+        - "post"
+      summary: "Delete a post"
+      description: "This endpoint allows users to delete posts."
+      produces:
+        - "application/json"
+      parameters:
+        - name: "postId"
+          in: "path"
+          description: "The post ID"
+          required: true
+          type: "integer"
+      security:
+        - Bearer: []      
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not found"
+        500:
+          description: "Internal server error"          
+  /comments/create:
+    post:
+      tags:
+        - "comment"
+      summary: "Create a new comment"
+      description: "This endpoint allows users to create comments."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "comment"
+          description: "Comment object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              postId:
+                type: "integer"
+                description: "The post's ID"
+              description:
+                type: "string"
+                description: "The comment's description"
+      security:
+        - Bearer: []                
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        500:
+          description: "Internal server error"
+  /comments/post/{postId}:
+    get:
+      tags:
+        - "comment"
+      summary: "Get all comments"
+      description: "This endpoint allows users to get comments on a post."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "postId"
+          in: "path"
+          description: "The post ID"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        500:
+          description: "Internal server error"
+
+  /comments/update/{commentId}:
+    put:
+      tags:
+        - "comment"
+      summary: "Update a comment"
+      description: "This endpoint allows users to update comments."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "commentId"
+          in: "path"
+          description: "The comment ID"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "comment"
+          description: "Comment object"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              description:
+                type: "string"
+                description: "The comment's description"
+      security:
+        - Bearer: []                
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        404:
+          description: "Not found"          
+        500:
+          description: "Internal server error"
+
+  /comments/delete/{commentId}:
+    put:
+      tags:
+        - "comment"
+      summary: "Delete a comment"
+      description: "This endpoint allows users to delete a comment."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "commentId"
+          in: "path"
+          description: "The comment ID"
+          required: true
+          type: "integer"
+      security:
+        - Bearer: []          
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid request parameters"
+        404:
+          description: "Not found"          
+        500:
+          description: "Internal server error" 
+definitions:
+  User:
+    type: "object"
+    properties:
+      userId:
+        type: "integer"
+      userName:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      verified:
+        type: "boolean"
+  Post:
+    type: "object"
+    properties:
+      postId:
+        type: "integer"
+      title:
+        type: "string"
+      description:
+        type: "string"
+      authorId:
+        type: "integer"
+      author:
+        type: "string"
+  Comment:
+    type: "object"
+    properties:
+      commentId:
+        type: "integer"
+      description:
+        type: "string"
+      authorId:
+        type: "integer"
+      postId:
+        type: "integer"        
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: >-
+      Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".
