@@ -12,7 +12,7 @@ client
         console.log("Redis client connected successfully!")
 })
     .catch((err) => {
-        console.log("error happened", err)
+        console.log("Redis client error, cached responses won't respond", err)
 });
 
 module.exports = client;
