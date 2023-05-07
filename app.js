@@ -9,6 +9,7 @@ const userRoute = require('./routes/userRoutes');
 const postRoute = require('./routes/postRoutes');
 const commentRoute = require('./routes/commentRoutes');
 const logger = require('./utils/logger');
+const limiter = require('./middleware/rateLimiter');
 
 const apiSpec = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 
@@ -21,6 +22,8 @@ app.use(expressWinston.logger({
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(limiter);
 
 app.use("/users", userRoute);
 app.use("/posts", postRoute);
