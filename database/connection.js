@@ -1,7 +1,9 @@
 const { Sequelize } = require('sequelize');
+const { DB_HOST, DB_NAME, DB_USER, DB_PASSWORD } = require('../config');
 
-const db = new Sequelize('postgres://postgres:123@localhost:5432', {
+const db = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   dialect: 'postgres',
+  host: DB_HOST,
   dialectOptions: {
     ssl: false
   }
