@@ -1,0 +1,31 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: blog_app
+    ports:
+      - '5432:5432'
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+  app:
+    depends_on:
+      - redis
+      - db
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 6379
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: blog_app
+      REDIS_HOST: cache
+      REDIS_PORT: 6379    
