@@ -18,6 +18,7 @@ services:
     depends_on:
       - redis
       - db
+    container_name: Blog-App      
     build: .
     ports:
       - "8000:8000"
