@@ -20,6 +20,9 @@ services:
       - db
     container_name: Blog-App      
     build: .
+    volumes:
+      - .:/usr/src/app/src
+      - /usr/src/app/src/node_modules  
     ports:
       - "8000:8000"
     environment:
