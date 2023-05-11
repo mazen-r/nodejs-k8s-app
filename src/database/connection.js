@@ -5,7 +5,8 @@ const db = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   dialect: 'postgres',
   host: DB_HOST,
   dialectOptions: {
-    ssl: false
+    ssl: false,
+    multipleStatements: false
   }
 })
 
