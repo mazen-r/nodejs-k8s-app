@@ -59,7 +59,7 @@ const updateComment = async (req, res, next) => {
             };
             return res.status(403).json({message: "You are not authorized"});
         };
-        return res.status(404).json({message: "No comments with this Id"});
+        return res.status(404).json({message: "No comments found with this Id"});
     } catch (err) {
         next(err);
     };
