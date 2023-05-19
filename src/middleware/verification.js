@@ -3,7 +3,7 @@ const { User } = require('../database/models/relations');
 const userVerify = async (req, res, next) => {
     const { userId } = req.user;
     try {
-        const  { verified } = await User.findByPk(userId);
+        const { verified } = await User.findByPk(userId);
         if (verified) {
             return next();
         };
