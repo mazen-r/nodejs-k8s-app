@@ -4,10 +4,7 @@ const { sendOTP, verifyCode } = require('../utils/twilio');
 
 const registerUser = async (req, res, next) => {
     const { userName, email, password: uhashedPassword } = req.body;
-    if (!userName | !email | !uhashedPassword) {
-        return res.status(400).json({message: "You must include all fields"});
-    }
-    const user = await User.findOne({ where: {email: email}})
+    const user = await User.findOne({ where: {email: email}});
     if (user) {
         return res.status(400).json({message: "This email has been registered"});
     }
@@ -27,9 +24,6 @@ const registerUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
     const { email, password } = req.body;
-    if (!email | !password) {
-        return res.status(400).json({message: "You must include all fields"});
-    };
     const user = await User.findOne({ where: { email: email }});
     try {
         if (user) {
@@ -62,7 +56,7 @@ const profile = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
     const { userId } = req.user;
     try {
-        const user = await User.findByPk(userId, { include: [Post]});
+        const user = await User.findByPk(userId, { include: [Post] });
         if (user) {
             await user.destroy();
             return res.status(200).json({message: "Deleted user successfully"});
@@ -74,10 +68,12 @@ const deleteUser = async (req, res, next) => {
 };
 
 const userOTP = async (req, res) => {
+    const { userId } = req.user;    
     const { phoneNumber } = req.body;
-    if (!phoneNumber) {
-        return res.status(400).json({message: "You must provide your phone number!"});
-    };
+    const user = await User.findByPk(userId);
+    if (user.verified) {
+        return res.status(200).json({message: "You are already verified!"});
+    }    
     try {
         await sendOTP(phoneNumber);
         return res.status(200).json({message: "Verification code sent!"});

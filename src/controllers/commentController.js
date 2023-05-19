@@ -4,9 +4,6 @@ const redisClient = require('../utils/redis');
 const createComment = async (req, res, next) => {
     const { userId: authorId, userName } = req.user;
     const { description, postId } = req.body;
-    if (!description | !postId) {
-        return res.status(400).json({message: "You must provide description and post Id"});
-    };
     try {
         const post = await Post.findByPk(postId);
         if (post) {

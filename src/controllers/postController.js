@@ -4,9 +4,6 @@ const redisClient = require('../utils/redis');
 const createPost = async (req, res, next) => {
     const { userId: authorId, userName: author } = req.user;
     const { title, description } = req.body;
-    if (!title | !description) {
-        return res.status(400).json({message: "You must add title and description"});
-    };
     try {
         const postsData = await Post.create({ title, description, authorId, author });
         const { postId } = postsData;
@@ -63,7 +60,7 @@ const updatePost = async (req, res, next) => {
     if (isNaN(postId)) {
         return res.status(400).json({message: "You must provide the post ID"});
     };
-    try {
+    // try {
         const postData = await Post.findByPk(postId);
         if (postData) {
             if (postData.authorId === userId) {
@@ -74,9 +71,9 @@ const updatePost = async (req, res, next) => {
             return res.status(403).json({message: "You are not authorized"});
         };
         return res.status(404).json({ message: "No posts avaiable" });
-    } catch(err) {
-        next(err);
-    };
+    // } catch(err) {
+    //     next(err);
+    // };
 };
 
 const deletePost = async (req, res, next) => {
