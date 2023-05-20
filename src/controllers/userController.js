@@ -1,4 +1,4 @@
-const  { User, Post } = require("../database/models/relations");
+const  { User } = require("../database/models/relations");
 const { GenerateSalt, GeneratePassword, ValidatePassword, GenerateSignature } = require('../utils/tokens');
 const { sendOTP, verifyCode } = require('../utils/twilio');
 
@@ -56,7 +56,7 @@ const profile = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
     const { userId } = req.user;
     try {
-        const user = await User.findByPk(userId, { include: [Post] });
+        const user = await User.findByPk(userId);
         if (user) {
             await user.destroy();
             return res.status(200).json({message: "Deleted user successfully"});
