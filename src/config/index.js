@@ -1,8 +1,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const PORT = process.env.PORT
-const APP_SECRET = process.env.APP_SECRET
+const PORT = process.env.PORT || 8000
+const APP_SECRET = process.env.APP_SECRET || "SECRET"
 const TWILIO_SID = process.env.TWILIO_SID || "AC_TWILIO_SID" // Add some dummy tokens if twillio credntials aren't provided
 const TWILIO_AUTH = process.env.TWILIO_AUTH || "TWILIO_AUTH"
 const TWILIO_SERVICE_SID = process.env.TWILIO_SERVICE_SID || "VA_TWILIO_SERVICE_SID"
@@ -25,4 +25,4 @@ module.exports = {
     DB_NAME: DB_NAME,
     DB_USER: DB_USER,
     DB_PASSWORD: DB_PASSWORD
-}
+};
