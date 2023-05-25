@@ -31,5 +31,5 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: blog_app
-      REDIS_HOST: cache
-      REDIS_PORT: 6379    
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
