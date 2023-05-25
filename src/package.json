@@ -22,6 +22,7 @@
     "nodemon": "^2.0.22",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
+    "prom-client": "^14.2.0",
     "redis": "^4.6.6",
     "sequelize": "^6.31.0",
     "sequelize-cli": "^6.6.0",
