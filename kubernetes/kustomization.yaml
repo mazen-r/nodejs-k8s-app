@@ -1,0 +1,7 @@
+resources:
+  - ./deployments/server-deployment.yaml
+  - ./deployments/postgres-deployment.yaml
+  - ./deployments/redis-deployment.yaml
+  - ./services/server-service.yaml
+  - ./services/postgres-service.yaml
+  - ./services/redis-service.yaml  
